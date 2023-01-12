@@ -21,14 +21,17 @@ import {
   ProgramList,
   Program,
   NotFound,
+  BodyWeight,
 } from "./index";
+import Layout from "../Layout";
 
 const Routing: React.FC = () => {
-  const { token, isConfigured, role } = useGetUserRouteState();
+  const { id, isConfigured, role } = useGetUserRouteState();
 
   let routes;
+  const isRouteWithLayout = !!id;
 
-  if (token) {
+  if (id) {
     if (!isConfigured) {
       routes = (
         <>
@@ -84,6 +87,7 @@ const Routing: React.FC = () => {
             <Route index element={<ProgramList />} />
             <Route path={NESTED_PATHS.PROGRAM} element={<Program />} />
           </Route>
+          <Route path={PATHS.BODY_WEIGHT} element={<BodyWeight />} />
           <Route path={PATHS.notFound} element={<NotFound />} />
         </>
       );
@@ -97,7 +101,18 @@ const Routing: React.FC = () => {
       </>
     );
   }
-  return <Routes>{routes}</Routes>;
+  return (
+    // eslint-disable-next-line react/jsx-no-useless-fragment
+    <>
+      {isRouteWithLayout ? (
+        <Layout>
+          <Routes>{routes}</Routes>
+        </Layout>
+      ) : (
+        <Routes>{routes}</Routes>
+      )}
+    </>
+  );
 };
 
 export default Routing;
